@@ -25,10 +25,11 @@ foreign import decodeURIComponent :: String -> String
 
 foreign import hashChanged :: forall e. (String -> String -> Eff e Unit) -> Eff e Unit
 
+foreign import popstateChanged :: forall e. (String -> String -> Eff e Unit) -> Eff e Unit
 
 hashes :: forall e. (String -> String -> Eff e Unit) -> Eff e Unit
 hashes cb =
-  hashChanged $ \old new -> do
+  popstateChanged $ \old new -> do
     cb (dropHash old) (dropHash new)
   where dropHash h = R.replace (R.regex "^[^#]*#" R.noFlags) "" h
 
@@ -62,3 +63,4 @@ matchHash = matchHash' decodeURIComponent
 
 matchHash' :: forall a. (String -> String) -> Match a -> String -> Either String a
 matchHash' decoder matcher hash = runMatch matcher $ parse decoder hash
+
