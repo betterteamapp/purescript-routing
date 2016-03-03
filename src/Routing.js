@@ -16,6 +16,17 @@ exports.hashChanged = function(handler) {
 };
 
 exports.popstateChanged = function(handler) {
+    var findNearestTag = function (el, tag) {
+        do {
+          if (el.tagName === tag)
+            return el;
+
+          el = el.parentNode;
+        } while (el.parentNode);
+
+        return null;
+    };
+
     return function () {
         var getLocation = function() {
             var loc = document.location;
@@ -27,8 +38,8 @@ exports.popstateChanged = function(handler) {
 
         // Catch clicks on the root-level element.
         document.getElementById('app').addEventListener('click', function(event) {
-            var tag = event.target;
-            if (tag.tagName == 'A' && tag.href && event.button == 0) {
+            var tag = findNearestTag(event.target, 'A');
+            if (tag && tag.href && event.button == 0) {
                 // It's a left click on an <a href=...>.
                 if (tag.origin == document.location.origin) {
                     // It's a same-origin navigation: a link within the site.
@@ -37,14 +48,16 @@ exports.popstateChanged = function(handler) {
                     // within-page update.  (You might also take .query into
                     // account.)
                     oldLoc = getLocation();
-                    var newPath = tag.href.substr(1);
+                    var newLoc = tag.getAttribute('href').substr(1);
                     // todo
                     if (true /* || app.capableOfRendering(newPath) */) {
                         // Prevent the browser from doing the navigation.
-                        e.preventDefault();
+                        event.preventDefault();
+
                         // Let the app handle it.
                         handler(oldLoc)(newLoc)();
-                        history.pushState(null, '', newPath);
+                        history.pushState(null, '', tag.href);
+                        return false;
                     }
                 }
             }
