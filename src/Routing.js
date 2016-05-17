@@ -63,7 +63,7 @@ exports.popstateChanged = function(handler) {
             }
         });
 
-        window.addEventListener('onpopstate', function(ev) {
+        window.addEventListener('popstate', function(ev) {
             var newLoc = getLocation();
             handler(oldLoc)(newLoc)();
             oldLoc = newLoc;
