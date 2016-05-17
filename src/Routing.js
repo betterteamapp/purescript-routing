@@ -30,7 +30,7 @@ exports.popstateChanged = function(handler) {
     return function () {
         var getLocation = function() {
             var loc = document.location;
-            return (loc.pathname.substr(1) + loc.search);
+            return (loc.pathname + loc.search);
         };
 
         var oldLoc = '';
@@ -48,7 +48,7 @@ exports.popstateChanged = function(handler) {
                     // within-page update.  (You might also take .query into
                     // account.)
                     oldLoc = getLocation();
-                    var newLoc = tag.getAttribute('href').substr(1);
+                    var newLoc = tag.getAttribute('href');
                     // todo
                     if (true /* || app.capableOfRendering(newPath) */) {
                         // Prevent the browser from doing the navigation.
